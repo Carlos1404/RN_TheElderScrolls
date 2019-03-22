@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
 import CustomSearchBar from "./Components/CustomSearchBar";
-import React from "react";
 import {
   StyleSheet,
   Text,
@@ -41,13 +40,16 @@ class CardsListScreen extends Component {
     return (
       <View style={styles.listItem}>
         <TouchableOpacity
-          onPress={() => this.props.navigation.navigate("CardDetails", { card: item })}
+          onPress={() =>
+            this.props.navigation.navigate("CardDetails", {
+              card: item,
+              onFavoriteChange: this.clickFavorite,
+              isFavorite: this.isCardFavorite(item.id)
+            })
+          }
         >
           <Text style={{ textAlign: "center" }}>{item.name}</Text>
-          <Image
-            style={{ width: 140, height: 200, textAlign: "center" }}
-            source={{ uri: item.imageUrl }}
-          />
+          <Image style={{ width: 140, height: 200 }} source={{ uri: item.imageUrl }} />
         </TouchableOpacity>
       </View>
     );
@@ -80,23 +82,6 @@ class CardsListScreen extends Component {
       this.state.favorites.splice(index, 1);
     }
     console.log(this.state.favorites);
-  };
-
-  renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate("CardDetails", {
-            card: item,
-            onFavoriteChange: this.clickFavorite,
-            isFavorite: this.isCardFavorite(item.id)
-          })
-        }
-      >
-        <Text>{item.name}</Text>
-        <Image style={{ width: 100, height: 150 }} source={{ uri: item.imageUrl }} />
-      </TouchableOpacity>
-    );
   };
 
   didReachEndList = numb => {

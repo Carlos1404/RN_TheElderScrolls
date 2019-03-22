@@ -1,9 +1,5 @@
 import React from "react";
-<<<<<<< HEAD
-import { StyleSheet, Text, View, StatusBar } from "react-native";
-=======
 import { StyleSheet, Text, View } from "react-native";
->>>>>>> origin
 import Navigator from "./MainNavigator";
 
 export default class App extends React.Component {
