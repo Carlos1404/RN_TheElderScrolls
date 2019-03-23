@@ -1,9 +1,20 @@
 import React, { Component } from "react";
 import axios from "axios";
-import CustomSearchBar from "./Components/CustomSearchBar";
-import Settings from "./Components/Settings";
-import { StyleSheet, Text, View, StatusBar, FlatList, Image, TouchableOpacity } from "react-native";
-import { BASE_URL } from "./Constants";
+import { Font } from "expo";
+import CustomSearchBar from "../Components/CustomSearchBar";
+import Settings from "../Components/Settings";
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  FlatList,
+  Image,
+  TouchableOpacity
+} from "react-native";
+import { BASE_URL } from "../Constants";
+import CustomIcon from "../Components/CustomIcon.js";
+
 class CardsListScreen extends Component {
   static navigationOptions = {
     header: null
@@ -15,7 +26,8 @@ class CardsListScreen extends Component {
     page: 1,
     name: "",
     favorites: [],
-    showSettings: false
+    showSettings: false,
+    isLoading: true
   };
 
   onTextChanged = name => {
@@ -40,7 +52,10 @@ class CardsListScreen extends Component {
           }
         >
           <Text style={{ textAlign: "center" }}>{item.name}</Text>
-          <Image style={{ width: 140, height: 200 }} source={{ uri: item.imageUrl }} />
+          <Image
+            style={{ width: 140, height: 200 }}
+            source={{ uri: item.imageUrl }}
+          />
         </TouchableOpacity>
       </View>
     );
@@ -64,7 +79,6 @@ class CardsListScreen extends Component {
     this.setState({
       favorites: updateList
     });
-    console.log(this.state.favorites);
   };
 
   deleteOfFavorites = idCard => {
@@ -91,7 +105,9 @@ class CardsListScreen extends Component {
     console.log(`${BASE_URL}cards?name=${name}`);
     axios
       .get(`${BASE_URL}cards?page=${page}&name=${name}`)
-      .then(response => this.setState({ cards: response.data.cards }))
+      .then(response =>
+        this.setState({ cards: response.data.cards, isLoading: false })
+      )
       .catch(err => console.warn(err));
   };
 
@@ -107,47 +123,74 @@ class CardsListScreen extends Component {
   };
 
   render() {
-    const { nbCardToDisplay, cards, name, showSettings } = this.state;
-    return (
-      <View style={styles.container}>
-        <CustomSearchBar onTextChanged={this.onTextChanged} currentName={name} />
-        {showSettings ? (
-          <View style={{ flex: 2, marginBottom: 5, paddingBottom: 5 }}>
-            <Settings />
+    const {
+      nbCardToDisplay,
+      cards,
+      name,
+      showSettings,
+      isLoading
+    } = this.state;
+    console.log(showSettings);
+    if (isLoading) {
+      return <Text>Loading content...</Text>;
+    } else {
+      return (
+        <View style={styles.container}>
+          <CustomSearchBar
+            onTextChanged={this.onTextChanged}
+            currentName={name}
+          />
+          {showSettings ? (
+            <View style={{ flex: 2, marginBottom: 5, paddingBottom: 5 }}>
+              <Settings />
+              <TouchableOpacity
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+                onPress={() =>
+                  this.setState(state => ({
+                    showSettings: !state.showSettings
+                  }))
+                }
+              >
+                <CustomIcon
+                  name="menu-up-outline"
+                  size={50}
+                  type="MaterialCommunityIcons"
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
             <TouchableOpacity
               style={{
                 justifyContent: "center",
                 alignItems: "center"
               }}
-              onPress={() => this.setState(state => ({ showSettings: !state.showSettings }))}
+              onPress={() =>
+                this.setState(state => ({ showSettings: !state.showSettings }))
+              }
             >
-              <Image style={{ width: 30, height: 20 }} source={require("./assets/star.png")} />
+              <CustomIcon
+                name="menu-down-outline"
+                size={50}
+                type="MaterialCommunityIcons"
+              />
             </TouchableOpacity>
+          )}
+          <View style={styles.list}>
+            <FlatList
+              data={cards.slice(0, nbCardToDisplay)}
+              renderItem={this.renderItem}
+              numColumns={2}
+              onEndReached={this.onEndReached}
+              onEndReachedThreshold={0.5}
+              keyExtractor={(item, i) => i.toString()}
+            />
           </View>
-        ) : (
-          //<SettingsIcon icon={down} /> >
-          <TouchableOpacity
-            style={{
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-            onPress={() => this.setState(state => ({ showSettings: !state.showSettings }))}
-          >
-            <Image style={{ width: 30, height: 20 }} source={require("./assets/star.png")} />
-          </TouchableOpacity>
-        )}
-        <View style={styles.list}>
-          <FlatList
-            data={cards.slice(0, nbCardToDisplay)}
-            renderItem={this.renderItem}
-            numColumns={2}
-            onEndReached={this.onEndReached}
-            onEndReachedThreshold={0.5}
-            keyExtractor={(item, i) => i.toString()}
-          />
         </View>
-      </View>
-    );
+      );
+    }
   }
 }
 

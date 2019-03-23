@@ -7,8 +7,8 @@ import {
   Image,
   TouchableOpacity
 } from "react-native";
-import star_empty from "./star_empty.png";
-import star from "./star.png";
+import star_empty from "../assets/Images/star_empty.png";
+import star from "../assets/Images/star.png";
 
 class CardDetailsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
