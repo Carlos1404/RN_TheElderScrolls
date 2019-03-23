@@ -1,13 +1,15 @@
-import {createStackNavigator, createAppContainer} from 'react-navigation';
-import CardDetailsScreen  from "./CardDetailsScreen";
-import CardsListScreen  from "./CardsListScreen";
+import { createStackNavigator, createAppContainer } from "react-navigation";
+import CardDetailsScreen from "./Screens/CardDetailsScreen";
+import CardsListScreen from "./Screens/CardsListScreen";
 
-const MainNavigator = createStackNavigator({
-  CardsList: CardsListScreen,
-  CardDetails: CardDetailsScreen,
-},{
-  initialRouteName: "CardsList"
-}
+const MainNavigator = createStackNavigator(
+  {
+    CardsList: CardsListScreen,
+    CardDetails: CardDetailsScreen
+  },
+  {
+    initialRouteName: "CardsList"
+  }
 );
 
 const Navigator = createAppContainer(MainNavigator);
