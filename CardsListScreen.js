@@ -1,19 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
 import CustomSearchBar from "./Components/CustomSearchBar";
-import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  Icon
-} from "react-native";
-
-const BASE_URL = "https://api.elderscrollslegends.io/v1/cards?";
-
+import Settings from "./Components/Settings";
+import { StyleSheet, Text, View, StatusBar, FlatList, Image, TouchableOpacity } from "react-native";
+import { BASE_URL } from "./Constants";
 class CardsListScreen extends Component {
   static navigationOptions = {
     header: null
@@ -24,7 +14,8 @@ class CardsListScreen extends Component {
     nbCardToDisplay: 10,
     page: 1,
     name: "",
-    favorites: []
+    favorites: [],
+    showSettings: false
   };
 
   onTextChanged = name => {
@@ -81,7 +72,6 @@ class CardsListScreen extends Component {
     if (index > -1) {
       this.state.favorites.splice(index, 1);
     }
-    console.log(this.state.favorites);
   };
 
   didReachEndList = numb => {
@@ -98,9 +88,9 @@ class CardsListScreen extends Component {
 
   fetchTheData = () => {
     const { page, name } = this.state;
-    console.log(`${BASE_URL}name=${name}`);
+    console.log(`${BASE_URL}cards?name=${name}`);
     axios
-      .get(`${BASE_URL}page=${page}&name=${name}`)
+      .get(`${BASE_URL}cards?page=${page}&name=${name}`)
       .then(response => this.setState({ cards: response.data.cards }))
       .catch(err => console.warn(err));
   };
@@ -117,12 +107,35 @@ class CardsListScreen extends Component {
   };
 
   render() {
-    const { nbCardToDisplay, cards, name } = this.state;
+    const { nbCardToDisplay, cards, name, showSettings } = this.state;
     return (
       <View style={styles.container}>
-        <View style={{ flex: 1, marginBottom: 5 }}>
-          <CustomSearchBar onTextChanged={this.onTextChanged} currentName={name} />
-        </View>
+        <CustomSearchBar onTextChanged={this.onTextChanged} currentName={name} />
+        {showSettings ? (
+          <View style={{ flex: 2, marginBottom: 5, paddingBottom: 5 }}>
+            <Settings />
+            <TouchableOpacity
+              style={{
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+              onPress={() => this.setState(state => ({ showSettings: !state.showSettings }))}
+            >
+              <Image style={{ width: 30, height: 20 }} source={require("./assets/star.png")} />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          //<SettingsIcon icon={down} /> >
+          <TouchableOpacity
+            style={{
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+            onPress={() => this.setState(state => ({ showSettings: !state.showSettings }))}
+          >
+            <Image style={{ width: 30, height: 20 }} source={require("./assets/star.png")} />
+          </TouchableOpacity>
+        )}
         <View style={styles.list}>
           <FlatList
             data={cards.slice(0, nbCardToDisplay)}
@@ -142,7 +155,9 @@ export default CardsListScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 0,
+    paddingTop: 0
   },
   list: {
     flex: 10,
