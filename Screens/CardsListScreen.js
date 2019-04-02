@@ -135,7 +135,7 @@ class CardsListScreen extends Component {
       selectedSubtype,
       selectedAttribute
     } = this.state;
-    console.log("selectedAttribute : ", selectedAttribute);
+    console.log("cards : ", cards.length);
     if (isLoading) {
       return <Text>Loading content...</Text>;
     } else {
