@@ -13,32 +13,11 @@ import {
 import { BASE_URL } from "../Constants";
 import Styles from "../styles";
 import BottomNavigation, {
-  FullTab,
-  createMaterialBottomTabNavigator
+  FullTab
 } from "react-native-material-bottom-navigation";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import HomeListScreen from "./HomeListScreen";
-import CardDetailsScreen from "./CardDetailsScreen";
-import {
-  createStackNavigator,
-  createAppContainer,
-  createBottomTabNavigator
-} from "react-navigation";
 
-const BottomNavigator = createMaterialBottomTabNavigator(
-  {
-    Home: { screen: HomeListScreen },
-    Favoris: { screen: CardDetailsScreen }
-  },
-  {
-    initialRouteName: "Home",
-    activeColor: "#f0edf6",
-    inactiveColor: "#3e2465",
-    barStyle: { backgroundColor: "#694fad" }
-  }
-);
-
-class CardsListScreen extends Component {
+export class HomeListScreen extends Component {
   static navigationOptions = {
     header: null
   };
@@ -63,23 +42,6 @@ class CardsListScreen extends Component {
     StatusBar.setHidden(true);
     this.fetchTheData();
   }
-
-  tabs = [
-    {
-      key: "home",
-      icon: "gamepad-variant",
-      label: "Home",
-      barColor: "#388E3C",
-      pressColor: "rgba(255, 255, 255, 0.16)"
-    },
-    {
-      key: "favoris",
-      icon: "movie",
-      label: "Favoris",
-      barColor: "#B71C1C",
-      pressColor: "rgba(255, 255, 255, 0.16)"
-    }
-  ];
 
   renderIcon = icon => ({ isActive }) => (
     <Icon size={24} color="white" name={icon} />
@@ -224,30 +186,17 @@ class CardsListScreen extends Component {
       return <Text>Loading content...</Text>;
     } else {
       return (
-        <View style={Styles.container}>
-          <CustomSearchBar
-            onTextChanged={this.onTextChanged}
-            currentName={name}
-          />
-          <Settings
-            selectedType={selectedType}
-            selectedSubtype={selectedSubtype}
-            selectedAttribute={selectedAttribute}
-            selectAType={this.selectAType}
-            selectASubType={this.selectASubtype}
-            selectAAttribute={this.selectAAttribute}
-            resetFilter={this.resetFilter}
-          />
-          <BottomNavigator />
-          <BottomNavigation
-            onTabPress={newTab => this.setState({ activeTab: newTab.key })}
-            renderTab={this.renderTab}
-            tabs={this.tabs}
+        <View style={Styles.list}>
+          <FlatList
+            data={cards.slice(0, nbCardToDisplay)}
+            renderItem={this.renderItem}
+            numColumns={2}
+            onEndReached={this.onEndReached}
+            onEndReachedThreshold={0.5}
+            keyExtractor={(item, i) => i.toString()}
           />
         </View>
       );
     }
   }
 }
-
-export default CardsListScreen;
