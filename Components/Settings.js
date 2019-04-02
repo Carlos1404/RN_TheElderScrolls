@@ -1,17 +1,19 @@
 import React, { Component } from "react";
-import { Text, View } from "react-native";
-import { CheckBox } from "react-native-elements";
+import { View, Picker } from "react-native";
 import { BASE_URL } from "../Constants";
 import axios from "axios";
+import Styles from "../styles";
 
 export default class Settings extends Component {
   state = {
     types: [],
-    subtypes: []
+    subtypes: [],
+    attributes: []
   };
   componentDidMount() {
     this.fetchTheType();
     this.fetchSubtypes();
+    this.fetchAttr();
   }
   fetchTheType = () => {
     axios
@@ -25,22 +27,61 @@ export default class Settings extends Component {
       .then(response => this.setState({ subtypes: response.data.subtypes }))
       .catch(err => console.warn(err));
   };
+  fetchAttr = () => {
+    axios
+      .get(`${BASE_URL}attributes`)
+      .then(response => this.setState({ attributes: response.data.attributes }))
+      .catch(err => console.warn(err));
+  };
 
   render() {
-    const { types, subtypes } = this.state;
-    console.log(subtypes);
+    const { types, subtypes, attributes } = this.state;
+    const {
+      selectASubType,
+      selectAType,
+      selectedSubtype,
+      selectedType,
+      selectedAttribute,
+      selectAAttribute
+    } = this.props;
+    console.log("typeselected : ", selectedType);
+
     return (
-      <View style={{ flex: 1 }}>
-        <Text style={{ flex: 1 }}>Choose Wanted Types</Text>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          {types.map(type => (<Text>{type}</Text>, <CheckBox title={type} />))}
-        </View>
-        <Text style={{ flex: 1 }}>Choose Wanted subtypes</Text>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          {subtypes.map(type => (
-            <CheckBox title={type} />
+      <View style={Styles.settingsContainer}>
+        <Picker
+          selectedValue={selectedType}
+          style={Styles.picker}
+          onValueChange={type => selectAType(type.replace(" ", ""))}
+        >
+          <Picker.Item label="All Types" value="" />
+          {types.map((type, index) => (
+            <Picker.Item label={type} value={type} key={index} />
           ))}
-        </View>
+        </Picker>
+        {selectedType == "Creature" && (
+          <View style={{ flexDirection: "row" }}>
+            <Picker
+              selectedValue={selectedSubtype}
+              style={Styles.picker}
+              onValueChange={subtype => selectASubType(subtype.replace(" ", ""))}
+            >
+              <Picker.Item label="All Subtypes" value="" />
+              {subtypes.map((subtype, index) => (
+                <Picker.Item label={subtype} value={subtype} key={index} />
+              ))}
+            </Picker>
+            <Picker
+              selectedValue={selectedAttribute}
+              style={Styles.picker}
+              onValueChange={subtype => selectAAttribute(subtype.replace(" ", ""))}
+            >
+              <Picker.Item label="All Attributes" value="" />
+              {attributes.map((attr, index) => (
+                <Picker.Item label={attr} value={attr} key={index} />
+              ))}
+            </Picker>
+          </View>
+        )}
       </View>
     );
   }
