@@ -10,30 +10,25 @@ import {
 } from "@expo/vector-icons";
 export default class CustomIcon extends React.Component {
   render() {
-    const {
-      name = "help",
-      size = 20,
-      color = "black",
-      type = "Ionicons"
-    } = this.props;
+    const { name = "help", size = 20, color = "black", type = "Entypo" } = this.props;
 
     switch (type) {
       case "Entypo":
-        return <Entypo name={name} size={size} color="green" />;
+        return <Entypo name={name} size={size} color={color} />;
       case "Ionicons":
-        return <Ionicons name={name} size={size} color="green" />;
+        return <Ionicons name={name} size={size} color={color} />;
       case "MaterialIcons":
-        return <MaterialIcons name={name} size={size} color="green" />;
+        return <MaterialIcons name={name} size={size} color={color} />;
       case "AntDesign":
-        return <AntDesign name={name} size={size} color="green" />;
+        return <AntDesign name={name} size={size} color={color} />;
       case "Foundation":
-        return <Foundation name={name} size={size} color="green" />;
+        return <Foundation name={name} size={size} color={color} />;
       case "MaterialCommunityIcons":
-        return <MaterialCommunityIcons name={name} size={size} color="green" />;
+        return <MaterialCommunityIcons name={name} size={size} color={color} />;
       case "FontAwesome":
-        return <FontAwesome name={name} size={size} color="green" />;
+        return <FontAwesome name={name} size={size} color={color} />;
       default:
-        return <Ionicons name={name} size={size} color="green" />;
+        return <Ionicons name={name} size={size} color={color} />;
     }
   }
 }

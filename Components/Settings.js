@@ -3,6 +3,7 @@ import { View, Picker } from "react-native";
 import { BASE_URL } from "../Constants";
 import axios from "axios";
 import Styles from "../styles";
+import CustomIcon from "./CustomIcon";
 
 export default class Settings extends Component {
   state = {
@@ -48,16 +49,19 @@ export default class Settings extends Component {
 
     return (
       <View style={Styles.settingsContainer}>
-        <Picker
-          selectedValue={selectedType}
-          style={Styles.picker}
-          onValueChange={type => selectAType(type.replace(" ", ""))}
-        >
-          <Picker.Item label="All Types" value="" />
-          {types.map((type, index) => (
-            <Picker.Item label={type} value={type} key={index} />
-          ))}
-        </Picker>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Picker
+            selectedValue={selectedType}
+            style={Styles.picker}
+            onValueChange={type => selectAType(type.replace(" ", ""))}
+          >
+            <Picker.Item label="All Types" value="" />
+            {types.map((type, index) => (
+              <Picker.Item label={type} value={type} key={index} />
+            ))}
+          </Picker>
+          <CustomIcon />
+        </View>
         {selectedType == "Creature" && (
           <View style={{ flexDirection: "row" }}>
             <Picker
