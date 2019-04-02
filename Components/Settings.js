@@ -3,7 +3,7 @@ import { View, Picker } from "react-native";
 import { BASE_URL } from "../Constants";
 import axios from "axios";
 import Styles from "../styles";
-import CustomIcon from "./CustomIcon";
+import { Icon } from "react-native-elements";
 
 export default class Settings extends Component {
   state = {
@@ -34,7 +34,6 @@ export default class Settings extends Component {
       .then(response => this.setState({ attributes: response.data.attributes }))
       .catch(err => console.warn(err));
   };
-
   render() {
     const { types, subtypes, attributes } = this.state;
     const {
@@ -43,10 +42,9 @@ export default class Settings extends Component {
       selectedSubtype,
       selectedType,
       selectedAttribute,
-      selectAAttribute
+      selectAAttribute,
+      resetFilter
     } = this.props;
-    console.log("typeselected : ", selectedType);
-
     return (
       <View style={Styles.settingsContainer}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -60,7 +58,16 @@ export default class Settings extends Component {
               <Picker.Item label={type} value={type} key={index} />
             ))}
           </Picker>
-          <CustomIcon />
+          <View style={Styles.iconContainer}>
+            <Icon
+              raised
+              name="delete-outline"
+              type="material-community"
+              color="#517fa4"
+              size={20}
+              onPress={() => resetFilter()}
+            />
+          </View>
         </View>
         {selectedType == "Creature" && (
           <View style={{ flexDirection: "row" }}>

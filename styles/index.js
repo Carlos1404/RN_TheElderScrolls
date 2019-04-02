@@ -23,5 +23,9 @@ export default (styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 0.8,
     borderColor: "#d6d7da"
+  },
+  iconContainer: {
+    alignSelf: "center",
+    paddingHorizontal: 20
   }
 }));

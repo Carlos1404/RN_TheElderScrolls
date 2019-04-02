@@ -114,6 +114,12 @@ class CardsListScreen extends Component {
       .catch(err => console.warn(err));
   };
 
+  resetFilter = () => {
+    this.setState({ selectedType: "", selectedSubtype: "", selectedAttribute: "" }, () =>
+      this.fetchTheData()
+    );
+  };
+
   onEndReached = () => {
     if (this.state.cards.length > 10) {
       this.setState(
@@ -135,7 +141,6 @@ class CardsListScreen extends Component {
       selectedSubtype,
       selectedAttribute
     } = this.state;
-    console.log("cards : ", cards.length);
     if (isLoading) {
       return <Text>Loading content...</Text>;
     } else {
@@ -149,6 +154,7 @@ class CardsListScreen extends Component {
             selectAType={this.selectAType}
             selectASubType={this.selectASubtype}
             selectAAttribute={this.selectAAttribute}
+            resetFilter={this.resetFilter}
           />
           <View style={Styles.list}>
             <FlatList
