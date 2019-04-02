@@ -2,41 +2,10 @@ import React, { Component } from "react";
 import axios from "axios";
 import CustomSearchBar from "../Components/CustomSearchBar";
 import Settings from "../Components/Settings";
-import {
-  Text,
-  View,
-  StatusBar,
-  FlatList,
-  Image,
-  TouchableOpacity
-} from "react-native";
+import { Text, View, StatusBar, FlatList, Image, TouchableOpacity } from "react-native";
 import { BASE_URL } from "../Constants";
 import Styles from "../styles";
-import BottomNavigation, {
-  FullTab,
-  createMaterialBottomTabNavigator
-} from "react-native-material-bottom-navigation";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import HomeListScreen from "./HomeListScreen";
-import CardDetailsScreen from "./CardDetailsScreen";
-import {
-  createStackNavigator,
-  createAppContainer,
-  createBottomTabNavigator
-} from "react-navigation";
-
-const BottomNavigator = createMaterialBottomTabNavigator(
-  {
-    Home: { screen: HomeListScreen },
-    Favoris: { screen: CardDetailsScreen }
-  },
-  {
-    initialRouteName: "Home",
-    activeColor: "#f0edf6",
-    inactiveColor: "#3e2465",
-    barStyle: { backgroundColor: "#694fad" }
-  }
-);
+import { BottomNavigator } from "../MainNavigator";
 
 class CardsListScreen extends Component {
   static navigationOptions = {
@@ -64,36 +33,6 @@ class CardsListScreen extends Component {
     this.fetchTheData();
   }
 
-  tabs = [
-    {
-      key: "home",
-      icon: "gamepad-variant",
-      label: "Home",
-      barColor: "#388E3C",
-      pressColor: "rgba(255, 255, 255, 0.16)"
-    },
-    {
-      key: "favoris",
-      icon: "movie",
-      label: "Favoris",
-      barColor: "#B71C1C",
-      pressColor: "rgba(255, 255, 255, 0.16)"
-    }
-  ];
-
-  renderIcon = icon => ({ isActive }) => (
-    <Icon size={24} color="white" name={icon} />
-  );
-
-  renderTab = ({ tab, isActive }) => (
-    <FullTab
-      isActive={isActive}
-      key={tab.key}
-      label={tab.label}
-      renderIcon={this.renderIcon(tab.icon)}
-    />
-  );
-
   renderItem = ({ item, index }) => {
     return (
       <View style={styles.listItem}>
@@ -107,10 +46,7 @@ class CardsListScreen extends Component {
           }
         >
           <Text style={{ textAlign: "center" }}>{item.name}</Text>
-          <Image
-            style={{ width: 140, height: 200 }}
-            source={{ uri: item.imageUrl }}
-          />
+          <Image style={{ width: 140, height: 200 }} source={{ uri: item.imageUrl }} />
         </TouchableOpacity>
       </View>
     );
@@ -175,27 +111,18 @@ class CardsListScreen extends Component {
   };
 
   fetchTheData = () => {
-    const {
-      page,
-      name,
-      selectedSubtype,
-      selectedType,
-      selectedAttribute
-    } = this.state;
+    const { page, name, selectedSubtype, selectedType, selectedAttribute } = this.state;
     axios
       .get(
         `${BASE_URL}cards?page=${page}&name=${name}&type=${selectedType}&subtypes=${selectedSubtype}&attributes=${selectedAttribute}`
       )
-      .then(response =>
-        this.setState({ cards: response.data.cards, isLoading: false })
-      )
+      .then(response => this.setState({ cards: response.data.cards, isLoading: false }))
       .catch(err => console.warn(err));
   };
 
   resetFilter = () => {
-    this.setState(
-      { selectedType: "", selectedSubtype: "", selectedAttribute: "" },
-      () => this.fetchTheData()
+    this.setState({ selectedType: "", selectedSubtype: "", selectedAttribute: "" }, () =>
+      this.fetchTheData()
     );
   };
 
@@ -225,10 +152,7 @@ class CardsListScreen extends Component {
     } else {
       return (
         <View style={Styles.container}>
-          <CustomSearchBar
-            onTextChanged={this.onTextChanged}
-            currentName={name}
-          />
+          <CustomSearchBar onTextChanged={this.onTextChanged} currentName={name} />
           <Settings
             selectedType={selectedType}
             selectedSubtype={selectedSubtype}
@@ -239,11 +163,6 @@ class CardsListScreen extends Component {
             resetFilter={this.resetFilter}
           />
           <BottomNavigator />
-          <BottomNavigation
-            onTabPress={newTab => this.setState({ activeTab: newTab.key })}
-            renderTab={this.renderTab}
-            tabs={this.tabs}
-          />
         </View>
       );
     }

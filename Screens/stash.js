@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import axios from "axios";
+import CustomSearchBar from "../Components/CustomSearchBar";
+import Settings from "../Components/Settings";
 import { Text, View, StatusBar, FlatList, Image, TouchableOpacity } from "react-native";
 import { BASE_URL } from "../Constants";
 import Styles from "../styles";
+import BottomNavigation, { FullTab } from "react-native-material-bottom-navigation";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 
 export class HomeListScreen extends Component {
   static navigationOptions = {
@@ -29,6 +33,17 @@ export class HomeListScreen extends Component {
     StatusBar.setHidden(true);
     this.fetchTheData();
   }
+
+  renderIcon = icon => ({ isActive }) => <Icon size={24} color="white" name={icon} />;
+
+  renderTab = ({ tab, isActive }) => (
+    <FullTab
+      isActive={isActive}
+      key={tab.key}
+      label={tab.label}
+      renderIcon={this.renderIcon(tab.icon)}
+    />
+  );
 
   renderItem = ({ item, index }) => {
     return (
@@ -162,5 +177,3 @@ export class HomeListScreen extends Component {
     }
   }
 }
-
-export default HomeListScreen;
