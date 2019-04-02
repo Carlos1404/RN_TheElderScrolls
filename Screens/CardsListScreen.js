@@ -1,19 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Font } from "expo";
 import CustomSearchBar from "../Components/CustomSearchBar";
 import Settings from "../Components/Settings";
-import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  FlatList,
-  Image,
-  TouchableOpacity
-} from "react-native";
+import { Text, View, StatusBar, FlatList, Image, TouchableOpacity } from "react-native";
 import { BASE_URL } from "../Constants";
-import CustomIcon from "../Components/CustomIcon.js";
+import Styles from "../styles";
 
 class CardsListScreen extends Component {
   static navigationOptions = {
@@ -24,9 +15,11 @@ class CardsListScreen extends Component {
     cards: [],
     nbCardToDisplay: 10,
     page: 1,
+    selectedType: "",
+    selectedSubtype: "",
+    selectedAttribute: "",
     name: "",
     favorites: [],
-    showSettings: false,
     isLoading: true
   };
 
@@ -52,13 +45,24 @@ class CardsListScreen extends Component {
           }
         >
           <Text style={{ textAlign: "center" }}>{item.name}</Text>
-          <Image
-            style={{ width: 140, height: 200 }}
-            source={{ uri: item.imageUrl }}
-          />
+          <Image style={{ width: 140, height: 200 }} source={{ uri: item.imageUrl }} />
         </TouchableOpacity>
       </View>
     );
+  };
+
+  selectAType = type => {
+    const subtype = type == "Creature" ? this.state.selectedSubtype : "";
+    const attri = type == "Creature" ? this.state.selectedAttribute : "";
+    this.setState({ selectedType: type, selectedSubtype: subtype, selectedAttribute: attri }, () =>
+      this.fetchTheData()
+    );
+  };
+  selectASubtype = subtype => {
+    this.setState({ selectedSubtype: subtype }, () => this.fetchTheData());
+  };
+  selectAAttribute = attri => {
+    this.setState({ selectedAttribute: attri }, () => this.fetchTheData());
   };
 
   clickFavorite = idCard => {
@@ -101,13 +105,12 @@ class CardsListScreen extends Component {
   };
 
   fetchTheData = () => {
-    const { page, name } = this.state;
-    console.log(`${BASE_URL}cards?name=${name}`);
+    const { page, name, selectedSubtype, selectedType, selectedAttribute } = this.state;
     axios
-      .get(`${BASE_URL}cards?page=${page}&name=${name}`)
-      .then(response =>
-        this.setState({ cards: response.data.cards, isLoading: false })
+      .get(
+        `${BASE_URL}cards?page=${page}&name=${name}&type=${selectedType}&subtypes=${selectedSubtype}&attributes=${selectedAttribute}`
       )
+      .then(response => this.setState({ cards: response.data.cards, isLoading: false }))
       .catch(err => console.warn(err));
   };
 
@@ -127,58 +130,27 @@ class CardsListScreen extends Component {
       nbCardToDisplay,
       cards,
       name,
-      showSettings,
-      isLoading
+      isLoading,
+      selectedType,
+      selectedSubtype,
+      selectedAttribute
     } = this.state;
-    console.log(showSettings);
+    console.log("selectedAttribute : ", selectedAttribute);
     if (isLoading) {
       return <Text>Loading content...</Text>;
     } else {
       return (
-        <View style={styles.container}>
-          <CustomSearchBar
-            onTextChanged={this.onTextChanged}
-            currentName={name}
+        <View style={Styles.container}>
+          <CustomSearchBar onTextChanged={this.onTextChanged} currentName={name} />
+          <Settings
+            selectedType={selectedType}
+            selectedSubtype={selectedSubtype}
+            selectedAttribute={selectedAttribute}
+            selectAType={this.selectAType}
+            selectASubType={this.selectASubtype}
+            selectAAttribute={this.selectAAttribute}
           />
-          {showSettings ? (
-            <View style={{ flex: 2, marginBottom: 5, paddingBottom: 5 }}>
-              <Settings />
-              <TouchableOpacity
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
-                onPress={() =>
-                  this.setState(state => ({
-                    showSettings: !state.showSettings
-                  }))
-                }
-              >
-                <CustomIcon
-                  name="menu-up-outline"
-                  size={50}
-                  type="MaterialCommunityIcons"
-                />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <TouchableOpacity
-              style={{
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-              onPress={() =>
-                this.setState(state => ({ showSettings: !state.showSettings }))
-              }
-            >
-              <CustomIcon
-                name="menu-down-outline"
-                size={50}
-                type="MaterialCommunityIcons"
-              />
-            </TouchableOpacity>
-          )}
-          <View style={styles.list}>
+          <View style={Styles.list}>
             <FlatList
               data={cards.slice(0, nbCardToDisplay)}
               renderItem={this.renderItem}
@@ -195,20 +167,3 @@ class CardsListScreen extends Component {
 }
 
 export default CardsListScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 0,
-    paddingTop: 0
-  },
-  list: {
-    flex: 10,
-    justifyContent: "space-around"
-  },
-  listItem: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
-  }
-});
