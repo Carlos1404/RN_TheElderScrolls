@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { View, Picker } from "react-native";
 import { BASE_URL } from "../Constants";
 import axios from "axios";
-import Styles from "../styles";
 import { Icon } from "react-native-elements";
+import { Styles } from "../styles";
 
 export default class Settings extends Component {
   state = {

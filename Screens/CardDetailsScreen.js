@@ -5,7 +5,8 @@ import {
   Button,
   Text,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage
 } from "react-native";
 import star_empty from "../assets/Images/star_empty.png";
 import star from "../assets/Images/star.png";
@@ -22,8 +23,7 @@ class CardDetailsScreen extends React.Component {
       headerRight: (
         <TouchableOpacity
           onPress={() => (
-            navigation.setParams({ isFavorite: !isFavorite }),
-            onFavoriteChange(card.id)
+            navigation.setParams({ isFavorite: !isFavorite }), onFavoriteChange(card.id)
           )}
         >
           <Image
@@ -41,10 +41,7 @@ class CardDetailsScreen extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{card.name}</Text>
-        <Image
-          style={{ width: 200, height: 300 }}
-          source={{ uri: card.imageUrl }}
-        />
+        <Image style={{ width: 200, height: 300 }} source={{ uri: card.imageUrl }} />
         <Text style={styles.body}>{card.rarity}</Text>
         <Text style={styles.body}>{card.type}</Text>
         <Text style={styles.body}>

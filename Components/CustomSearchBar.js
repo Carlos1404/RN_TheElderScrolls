@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { TextField } from "react-native-material-textfield";
-import Styles from "../styles";
 import { View } from "react-native";
+import { Styles } from "../styles";
 
 export default class CustomSearchBar extends Component {
   render() {

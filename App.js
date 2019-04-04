@@ -9,7 +9,13 @@ if (Platform.OS === "android") {
 }
 
 export default class App extends React.Component {
+  state = {
+    favoris: [1, 2]
+  };
+  updateFavoris = favoris => {
+    this.setState({ favoris });
+  };
   render() {
-    return <Navigator />;
+    return <Navigator {...this.state} updateFavoris={this.updateFavoris} />;
   }
 }

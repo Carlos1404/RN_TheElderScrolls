@@ -2,16 +2,20 @@ import React, { Component } from "react";
 import axios from "axios";
 import CustomSearchBar from "../Components/CustomSearchBar";
 import Settings from "../Components/Settings";
-import { Text, View, StatusBar, FlatList, Image, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  StatusBar,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  AsyncStorage
+} from "react-native";
 import { BASE_URL } from "../Constants";
-import Styles from "../styles";
-import { BottomNavigator } from "../MainNavigator";
+import { Styles } from "../styles";
+import { stringify } from "qs";
 
 class CardsListScreen extends Component {
-  static navigationOptions = {
-    header: null
-  };
-
   state = {
     cards: [],
     nbCardToDisplay: 10,
@@ -24,6 +28,30 @@ class CardsListScreen extends Component {
     isLoading: true
   };
 
+  _storeFav = async () => {
+    const fav = this.state.favorites;
+    console.log("fav : ", fav);
+    try {
+      console.log("successfuly stored");
+      await AsyncStorage.setItem("FAVORITE", JSON.stringify(this.state.favorites));
+    } catch (error) {
+      console.log("error store", error);
+    }
+  };
+
+  _retrieveData = async () => {
+    try {
+      const favorites = await AsyncStorage.getItem("FAVORITE");
+      console.log("retrive fav", favorites);
+
+      if (favorites !== null) {
+        this.setState({ favorites: JSON.parse(favorites) });
+      }
+    } catch (error) {
+      console.log("error retrieve", error);
+    }
+  };
+
   onTextChanged = name => {
     this.setState({ name }, () => this.fetchTheData());
   };
@@ -31,11 +59,12 @@ class CardsListScreen extends Component {
   componentDidMount() {
     StatusBar.setHidden(true);
     this.fetchTheData();
+    this._retrieveData();
   }
 
   renderItem = ({ item, index }) => {
     return (
-      <View style={styles.listItem}>
+      <View style={Styles.listItem}>
         <TouchableOpacity
           onPress={() =>
             this.props.navigation.navigate("CardDetails", {
@@ -77,6 +106,7 @@ class CardsListScreen extends Component {
     } else {
       this.addToFavorites(idCard);
     }
+    this._storeFav().then(() => this._retrieveData());
   };
 
   isCardFavorite = idCard => {
@@ -85,6 +115,8 @@ class CardsListScreen extends Component {
 
   addToFavorites = idCard => {
     var updateList = this.state.favorites;
+    console.log("idCard ", idCard);
+    console.log("updateList", updateList);
     updateList.push(idCard);
     this.setState({
       favorites: updateList
@@ -162,7 +194,16 @@ class CardsListScreen extends Component {
             selectAAttribute={this.selectAAttribute}
             resetFilter={this.resetFilter}
           />
-          <BottomNavigator />
+          <View style={Styles.list}>
+            <FlatList
+              data={cards.slice(0, nbCardToDisplay)}
+              renderItem={this.renderItem}
+              numColumns={2}
+              onEndReached={this.onEndReached}
+              onEndReachedThreshold={0.5}
+              keyExtractor={(item, i) => i.toString()}
+            />
+          </View>
         </View>
       );
     }
