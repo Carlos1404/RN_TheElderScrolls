@@ -2,20 +2,17 @@ import React, { Component } from "react";
 import axios from "axios";
 import CustomSearchBar from "../Components/CustomSearchBar";
 import Settings from "../Components/Settings";
-import {
-  Text,
-  View,
-  StatusBar,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  AsyncStorage
-} from "react-native";
+import { Text, View, StatusBar, FlatList, Image, TouchableOpacity } from "react-native";
 import { BASE_URL } from "../Constants";
-import { Styles } from "../styles";
-import { stringify } from "qs";
+import Styles from "../styles";
+import BottomNavigation, { FullTab } from "react-native-material-bottom-navigation";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 
-class CardsListScreen extends Component {
+export class HomeListScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
+
   state = {
     cards: [],
     nbCardToDisplay: 10,
@@ -28,30 +25,6 @@ class CardsListScreen extends Component {
     isLoading: true
   };
 
-  _storeFav = async () => {
-    const fav = this.state.favorites;
-    console.log("fav : ", fav);
-    try {
-      console.log("successfuly stored");
-      await AsyncStorage.setItem("FAVORITE", JSON.stringify(this.state.favorites));
-    } catch (error) {
-      console.log("error store", error);
-    }
-  };
-
-  _retrieveData = async () => {
-    try {
-      const favorites = await AsyncStorage.getItem("FAVORITE");
-      console.log("retrive fav", favorites);
-
-      if (favorites !== null) {
-        this.setState({ favorites: JSON.parse(favorites) });
-      }
-    } catch (error) {
-      console.log("error retrieve", error);
-    }
-  };
-
   onTextChanged = name => {
     this.setState({ name }, () => this.fetchTheData());
   };
@@ -59,12 +32,22 @@ class CardsListScreen extends Component {
   componentDidMount() {
     StatusBar.setHidden(true);
     this.fetchTheData();
-    this._retrieveData();
   }
+
+  renderIcon = icon => ({ isActive }) => <Icon size={24} color="white" name={icon} />;
+
+  renderTab = ({ tab, isActive }) => (
+    <FullTab
+      isActive={isActive}
+      key={tab.key}
+      label={tab.label}
+      renderIcon={this.renderIcon(tab.icon)}
+    />
+  );
 
   renderItem = ({ item, index }) => {
     return (
-      <View style={Styles.listItem}>
+      <View style={styles.listItem}>
         <TouchableOpacity
           onPress={() =>
             this.props.navigation.navigate("CardDetails", {
@@ -106,7 +89,6 @@ class CardsListScreen extends Component {
     } else {
       this.addToFavorites(idCard);
     }
-    this._storeFav().then(() => this._retrieveData());
   };
 
   isCardFavorite = idCard => {
@@ -115,8 +97,6 @@ class CardsListScreen extends Component {
 
   addToFavorites = idCard => {
     var updateList = this.state.favorites;
-    console.log("idCard ", idCard);
-    console.log("updateList", updateList);
     updateList.push(idCard);
     this.setState({
       favorites: updateList
@@ -183,31 +163,17 @@ class CardsListScreen extends Component {
       return <Text>Loading content...</Text>;
     } else {
       return (
-        <View style={Styles.container}>
-          <CustomSearchBar onTextChanged={this.onTextChanged} currentName={name} />
-          <Settings
-            selectedType={selectedType}
-            selectedSubtype={selectedSubtype}
-            selectedAttribute={selectedAttribute}
-            selectAType={this.selectAType}
-            selectASubType={this.selectASubtype}
-            selectAAttribute={this.selectAAttribute}
-            resetFilter={this.resetFilter}
+        <View style={Styles.list}>
+          <FlatList
+            data={cards.slice(0, nbCardToDisplay)}
+            renderItem={this.renderItem}
+            numColumns={2}
+            onEndReached={this.onEndReached}
+            onEndReachedThreshold={0.5}
+            keyExtractor={(item, i) => i.toString()}
           />
-          <View style={Styles.list}>
-            <FlatList
-              data={cards.slice(0, nbCardToDisplay)}
-              renderItem={this.renderItem}
-              numColumns={2}
-              onEndReached={this.onEndReached}
-              onEndReachedThreshold={0.5}
-              keyExtractor={(item, i) => i.toString()}
-            />
-          </View>
         </View>
       );
     }
   }
 }
-
-export default CardsListScreen;

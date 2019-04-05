@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export default (styles = StyleSheet.create({
+export const Styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 0,
@@ -28,4 +28,14 @@ export default (styles = StyleSheet.create({
     alignSelf: "center",
     paddingHorizontal: 20
   }
-}));
+});
+
+export const Colors = {
+  darkBrown: "#505050",
+  lightBrown: "#8c7762",
+  darkBlue: "#215260",
+  blue: "#628c8b",
+  ligthBlue: "#8cbcbe",
+  darkGrey: "#393939",
+  lightGrey: "#dfdfdf"
+};
