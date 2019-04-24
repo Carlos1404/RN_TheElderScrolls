@@ -58,7 +58,6 @@ class FavorisListScreen extends Component {
   };
 
   renderItem = ({ item, index }) => {
-    console.log("render :");
     return (
       <View style={Styles.listItem}>
         <TouchableOpacity
@@ -81,21 +80,16 @@ class FavorisListScreen extends Component {
   };
 
   render() {
-    this.state.favorites.map(e => console.log(e.name));
-    const { favorites } = this.state;
-    console.log("on fav");
     return (
       <View style={Styles.container}>
         <Text style={{ textAlign: "center" }}>Favoris</Text>
         <View style={Styles.list}>
-          <Text>Ici {favorites.length}</Text>
           <FlatList
-            data={favorites}
+            data={this.state.favorites}
             renderItem={this.renderItem}
             numColumns={2}
             keyExtractor={(item, i) => i.toString()}
           />
-          <Text>Ici</Text>
         </View>
       </View>
     );
