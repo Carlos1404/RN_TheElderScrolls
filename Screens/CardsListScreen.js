@@ -33,7 +33,10 @@ class CardsListScreen extends Component {
     console.log("fav : ", fav);
     try {
       console.log("successfuly stored");
-      await AsyncStorage.setItem("FAVORITE", JSON.stringify(this.state.favorites));
+      await AsyncStorage.setItem(
+        "FAVORITE",
+        JSON.stringify(this.state.favorites)
+      );
     } catch (error) {
       console.log("error store", error);
     }
@@ -75,7 +78,10 @@ class CardsListScreen extends Component {
           }
         >
           <Text style={{ textAlign: "center" }}>{item.name}</Text>
-          <Image style={{ width: 140, height: 200 }} source={{ uri: item.imageUrl }} />
+          <Image
+            style={{ width: 140, height: 200 }}
+            source={{ uri: item.imageUrl }}
+          />
         </TouchableOpacity>
       </View>
     );
@@ -143,18 +149,27 @@ class CardsListScreen extends Component {
   };
 
   fetchTheData = () => {
-    const { page, name, selectedSubtype, selectedType, selectedAttribute } = this.state;
+    const {
+      page,
+      name,
+      selectedSubtype,
+      selectedType,
+      selectedAttribute
+    } = this.state;
     axios
       .get(
         `${BASE_URL}cards?page=${page}&name=${name}&type=${selectedType}&subtypes=${selectedSubtype}&attributes=${selectedAttribute}`
       )
-      .then(response => this.setState({ cards: response.data.cards, isLoading: false }))
+      .then(response =>
+        this.setState({ cards: response.data.cards, isLoading: false })
+      )
       .catch(err => console.warn(err));
   };
 
   resetFilter = () => {
-    this.setState({ selectedType: "", selectedSubtype: "", selectedAttribute: "" }, () =>
-      this.fetchTheData()
+    this.setState(
+      { selectedType: "", selectedSubtype: "", selectedAttribute: "" },
+      () => this.fetchTheData()
     );
   };
 
@@ -184,7 +199,10 @@ class CardsListScreen extends Component {
     } else {
       return (
         <View style={Styles.container}>
-          <CustomSearchBar onTextChanged={this.onTextChanged} currentName={name} />
+          <CustomSearchBar
+            onTextChanged={this.onTextChanged}
+            currentName={name}
+          />
           <Settings
             selectedType={selectedType}
             selectedSubtype={selectedSubtype}

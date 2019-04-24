@@ -11,12 +11,16 @@ import {
 } from "react-native";
 import { BASE_URL } from "../Constants";
 import { Styles } from "../styles";
+import axios from "axios";
 
 class FavorisListScreen extends Component {
   state = { favorites: [], favoritesCard: [] };
   _storeFav = async () => {
     try {
-      await AsyncStorage.setItem("FAVORITE", JSON.stringify(this.state.favorites));
+      await AsyncStorage.setItem(
+        "FAVORITE",
+        JSON.stringify(this.state.favorites)
+      );
     } catch (error) {
       console.warn(error);
     }
@@ -24,31 +28,24 @@ class FavorisListScreen extends Component {
 
   _retrieveData = async () => {
     try {
-      const favorites = await AsyncStorage.getItem("FAVORITE");
+      var favorites = await AsyncStorage.getItem("FAVORITE");
+      favorites = JSON.parse(favorites);
       if (favorites !== null) {
-        console.log("test1", favorites)
-        favorites.array.forEach(id => {
-          console.log(idCard);
-          this.fetchTheData(idCard)
-        });
-        console.log("test favori ", favorites);
+        favorites.map(fav => this.fetchTheData(fav));
       }
     } catch (error) {
-      // Error retrieving data
+      console.log(error);
     }
   };
 
-  fetchTheData = (idCard) => {
+  fetchTheData = idCard => {
     axios
-      .get(
-        `${BASE_URL}cards/${idCard}`
-      )
+      .get(`${BASE_URL}cards/${idCard}`)
       .then(response => {
-        console.log("test2")
-        favoriteCards = this.state.favoritesCard;
+        favoriteCards = this.state.favorites;
         favoriteCards.push(response.data.card);
-        console.log(favoriteCards);
-        this.setState({ favoritesCard: favoriteCards, isLoading: false });})
+        this.setState({ favoritesCard: favoriteCards, isLoading: false });
+      })
       .catch(err => console.warn(err));
   };
 
@@ -61,6 +58,7 @@ class FavorisListScreen extends Component {
   };
 
   renderItem = ({ item, index }) => {
+    console.log("render :");
     return (
       <View style={Styles.listItem}>
         <TouchableOpacity
@@ -73,26 +71,33 @@ class FavorisListScreen extends Component {
           }
         >
           <Text style={{ textAlign: "center" }}>{item.name}</Text>
-          <Image style={{ width: 140, height: 200 }} source={{ uri: item.imageUrl }} />
+          <Image
+            style={{ width: 140, height: 200 }}
+            source={{ uri: item.imageUrl }}
+          />
         </TouchableOpacity>
       </View>
     );
   };
 
   render() {
-    console.log(this.state);
+    this.state.favorites.map(e => console.log(e.name));
+    const { favorites } = this.state;
+    console.log("on fav");
     return (
       <View style={Styles.container}>
-      <Text style={{ textAlign: "center" }}>Favoris</Text>
+        <Text style={{ textAlign: "center" }}>Favoris</Text>
         <View style={Styles.list}>
-              <FlatList
-                data={this.state.favorites}
-                renderItem={this.renderItem}
-                numColumns={2}
-                keyExtractor={(item, i) => i.toString()}
-              />
-            </View>
-          </View>
+          <Text>Ici {favorites.length}</Text>
+          <FlatList
+            data={favorites}
+            renderItem={this.renderItem}
+            numColumns={2}
+            keyExtractor={(item, i) => i.toString()}
+          />
+          <Text>Ici</Text>
+        </View>
+      </View>
     );
   }
 }
