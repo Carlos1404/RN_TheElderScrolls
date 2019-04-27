@@ -36,7 +36,7 @@ export const Styles = StyleSheet.create({
   },
   body: {
     fontSize: 20,
-    width: 100,
+    width: 130,
     padding: 5,
     color: "#fff",
     textAlign: "center",

@@ -38,7 +38,7 @@ class CardDetailsScreen extends React.Component {
       <ScrollView>
         <View style={Styles.container}>
           <Text style={Styles.title}>{card.name}</Text>
-          <View style={StyleMedia.mainRow}>
+          <View style={Styles.mainRow}>
             <Text style={Styles.body}>{card.rarity}</Text>
             <Text style={Styles.body}>{card.type}</Text>
           </View>
