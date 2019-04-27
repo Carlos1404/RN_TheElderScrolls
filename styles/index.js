@@ -6,6 +6,45 @@ export const Styles = StyleSheet.create({
     marginTop: 0,
     paddingTop: 0
   },
+  containerCenter: {
+    flex: 1,
+    alignItems: "center"
+  },
+  title: {
+    margin: 16,
+    fontSize: 34,
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  titleRow: { flex: 2, fontWeight: "bold", fontSize: 18 },
+  contentRow: { flex: 3, fontSize: 14 },
+  rows: {
+    flex: 1,
+    alignSelf: "center",
+    marginHorizontal: 10,
+    paddingVertical: 5,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: "#d6d7da"
+  },
+  mainRow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-evenly"
+  },
+  body: {
+    fontSize: 20,
+    width: 130,
+    padding: 5,
+    color: "#fff",
+    textAlign: "center",
+    backgroundColor: "#FFC107",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#fff"
+  },
   list: {
     flex: 10,
     justifyContent: "space-around"

@@ -14,7 +14,7 @@ import { Styles } from "../styles";
 import axios from "axios";
 
 class FavorisListScreen extends Component {
-  state = { favorites: [], favoritesCard: [] };
+  state = { favorites: [], favoriteCards: [] };
   _storeFav = async () => {
     try {
       await AsyncStorage.setItem(
@@ -38,26 +38,36 @@ class FavorisListScreen extends Component {
     }
   };
 
+  clickFavorite = idCard => {
+    console.log("pas encore implémenté");
+  };
+
   fetchTheData = idCard => {
+    console.log(`${BASE_URL}cards/${idCard}`);
     axios
       .get(`${BASE_URL}cards/${idCard}`)
       .then(response => {
-        favoriteCards = this.state.favorites;
-        favoriteCards.push(response.data.card);
-        this.setState({ favoritesCard: favoriteCards, isLoading: false });
+        (favoriteCards = this.state.favorites),
+          favoriteCards.push(response.data.card),
+          this.setState(
+            { favoriteCards: favoriteCards, isLoading: false },
+            () => console.log(this.state.favoriteCards.length)
+          );
       })
       .catch(err => console.warn(err));
   };
 
   componentDidMount() {
-    this._retrieveData();
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener("didFocus", () => {
+      this.setState({ favorites: [], favoriteCards: [] }, () =>
+        this._retrieveData()
+      );
+    });
   }
 
-  isCardFavorite = idCard => {
-    return this.state.favorites.includes(idCard);
-  };
-
   renderItem = ({ item, index }) => {
+    console.log("item ", item);
     return (
       <View style={Styles.listItem}>
         <TouchableOpacity
@@ -65,7 +75,7 @@ class FavorisListScreen extends Component {
             this.props.navigation.navigate("CardDetails", {
               card: item,
               onFavoriteChange: this.clickFavorite,
-              isFavorite: this.isCardFavorite(item.id)
+              isFavorite: true
             })
           }
         >
@@ -80,12 +90,13 @@ class FavorisListScreen extends Component {
   };
 
   render() {
+    console.log("render :", this.state.favoriteCards);
     return (
       <View style={Styles.container}>
         <Text style={{ textAlign: "center" }}>Favoris</Text>
         <View style={Styles.list}>
           <FlatList
-            data={this.state.favorites}
+            data={this.state.favoriteCards}
             renderItem={this.renderItem}
             numColumns={2}
             keyExtractor={(item, i) => i.toString()}

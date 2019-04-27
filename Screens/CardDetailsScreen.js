@@ -1,15 +1,10 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Button,
-  Text,
-  Image,
-  TouchableOpacity,
-  AsyncStorage
-} from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import star_empty from "../assets/Images/star_empty.png";
 import star from "../assets/Images/star.png";
+import CustomTableRow from "../Components/CustomTableRow";
+import { ScrollView } from "react-native-gesture-handler";
+import { Styles } from "../styles";
 
 class CardDetailsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -23,7 +18,8 @@ class CardDetailsScreen extends React.Component {
       headerRight: (
         <TouchableOpacity
           onPress={() => (
-            navigation.setParams({ isFavorite: !isFavorite }), onFavoriteChange(card.id)
+            navigation.setParams({ isFavorite: !isFavorite }),
+            onFavoriteChange(card.id)
           )}
         >
           <Image
@@ -39,41 +35,29 @@ class CardDetailsScreen extends React.Component {
     const { navigation } = this.props;
     card = navigation.getParam("card");
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>{card.name}</Text>
-        <Image style={{ width: 200, height: 300 }} source={{ uri: card.imageUrl }} />
-        <Text style={styles.body}>{card.rarity}</Text>
-        <Text style={styles.body}>{card.type}</Text>
-        <Text style={styles.body}>
-          {card.cost} {card.cost > 1 ? "pièces" : "pièce"}
-        </Text>
-      </View>
+      <ScrollView>
+        <View style={Styles.container}>
+          <Text style={Styles.title}>{card.name}</Text>
+          <View style={Styles.mainRow}>
+            <Text style={Styles.body}>{card.rarity}</Text>
+            <Text style={Styles.body}>{card.type}</Text>
+          </View>
+          <View style={Styles.containerCenter}>
+            <Image
+              style={{ width: 200, height: 300 }}
+              source={{ uri: card.imageUrl }}
+            />
+            <Text style={Styles.body}>
+              {card.cost} {card.cost > 1 ? "pièces" : "pièce"}
+            </Text>
+          </View>
+          {Object.entries(card).map((i, index) => (
+            <CustomTableRow title={i[0]} content={i[1]} key={index} />
+          ))}
+        </View>
+      </ScrollView>
     );
   }
 }
 
 export default CardDetailsScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center"
-  },
-  title: {
-    margin: 16,
-    fontSize: 34,
-    fontWeight: "bold",
-    textAlign: "center"
-  },
-  body: {
-    margin: 16,
-    fontSize: 20,
-    padding: 10,
-    color: "#fff",
-    textAlign: "center",
-    backgroundColor: "#FFC107",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#fff"
-  }
-});
